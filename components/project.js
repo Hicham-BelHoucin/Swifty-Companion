@@ -1,12 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  TextInput,
-  Image,
-  ScrollView,
-} from "react-native";
+import { Text, View } from "react-native";
 
 const Project = ({ project }) => {
   return (
@@ -19,7 +11,10 @@ const Project = ({ project }) => {
       <Text
         style={{
           color: "#0961F5",
+          width: "80%",
+          textAlign: "left",
         }}
+        numberOfLines={1}
       >
         {project.project.name}
       </Text>

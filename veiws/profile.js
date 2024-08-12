@@ -13,11 +13,13 @@ import Toast from "react-native-toast-message";
 import { getValueFor, deleteValueFor } from "../tools";
 import Icon from "react-native-vector-icons/SimpleLineIcons";
 import Profile from "./../components/profile";
+import { useAuthContext, authUrl } from "../context/auth.context";
 
 function HomePage({ navigation }) {
-  const [value, onChangeText] = React.useState("Useless Placeholder");
+  const [value, onChangeText] = React.useState("");
   const [data, setData] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
+  const { setAuthorized } = useAuthContext();
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -36,6 +38,7 @@ function HomePage({ navigation }) {
               color={"#0961F5"}
               onPress={async () => {
                 await deleteValueFor("access_token");
+                setAuthorized(false);
                 navigation.navigate("Login");
               }}
             />
@@ -47,7 +50,14 @@ function HomePage({ navigation }) {
 
   const search = async () => {
     try {
-      if (value === "") return;
+      if (value === "") {
+        Toast.show({
+          type: "error", // 'info', 'success', 'error', or 'warning'
+          text1: "Please enter a login",
+          text2: "Please try again",
+        });
+        return;
+      }
       const token = await getValueFor("access_token");
       if (!token) return;
       setLoading(true);
@@ -99,6 +109,7 @@ function HomePage({ navigation }) {
             width: "80%",
             height: "60%",
             justifyContent: "center",
+            gap: 16,
           }}
         >
           <Image
@@ -110,12 +121,13 @@ function HomePage({ navigation }) {
               height: 100,
             }}
           />
-          <Text style={styles.title}>Search Users : </Text>
+          <Text style={styles.title}>Search Users</Text>
           <TextInput
             editable
             numberOfLines={4}
             maxLength={40}
             onChangeText={(text) => onChangeText(text)}
+            placeholder="Enter a login "
             value={value}
             style={{ padding: 10, width: "100%" }}
           />

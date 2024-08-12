@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import { getValueFor, getUserInfo } from "../tools";
+import { getValueFor, getUserInfo, refreshToken } from "../tools";
 import { useNavigation } from "@react-navigation/native";
 import { REACT_APP_CLIENT_ID, REACT_APP_REDIRECT_URI } from "@env";
 
@@ -15,6 +15,12 @@ export function useAuthContext() {
   return useContext(AuthContext);
 }
 
+function isTokenExpired(createdAt, expiresIn) {
+  const currentTime = parseInt(Date.now() / 1000);
+  const expirationTime = parseInt(createdAt) + parseInt(expiresIn);
+  return currentTime > expirationTime;
+}
+
 // Create a provider component
 export function AuthContextProvider({ children }) {
   const [authorized, setAuthorized] = useState(false);
@@ -25,6 +31,9 @@ export function AuthContextProvider({ children }) {
       try {
         const token = await getValueFor("access_token");
         if (token) {
+          const isExpired = isTokenExpired(token.created_at, token.expires_in);
+          console.log("isExpired", isExpired);
+          await refreshToken();
           const user = await getUserInfo("hbel-hou");
           if (user) {
             setAuthorized(true);

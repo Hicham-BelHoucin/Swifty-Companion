@@ -45,6 +45,35 @@ export async function getTokens(code) {
   } catch (error) {}
 }
 
+export async function refreshToken() {
+  const token = await getValueFor("access_token");
+
+  const details = {
+    grant_type: "refresh_token",
+    refresh_token: token.refresh_token,
+    client_id: REACT_APP_CLIENT_ID,
+    client_secret: REACT_APP_CLIENT_SECRET,
+  };
+
+  const formBody = Object.keys(details)
+    .map(
+      (key) => encodeURIComponent(key) + "=" + encodeURIComponent(details[key])
+    )
+    .join("&");
+  try {
+    const res = await fetch("https://api.intra.42.fr/oauth/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+      },
+      body: formBody,
+    });
+    const data = await res.json();
+    console.log("data", data);
+    await setValueFor("access_token", data);
+  } catch (error) {}
+}
+
 export async function getUserInfo(login) {
   try {
     if (login === "") return;

@@ -6,6 +6,7 @@ import {
   TextInput,
   Image,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 
 import React from "react";
@@ -26,10 +27,10 @@ function Profile({ user, setUser }) {
   const [state, setState] = React.useState(1);
   const [selected, setSelected] = React.useState(0);
   return (
-    <Card
+    <ScrollView
       style={{
         gap: 2,
-        height: "90%",
+        ...styles.card,
       }}
     >
       <TouchableOpacity
@@ -83,7 +84,12 @@ function Profile({ user, setUser }) {
         first="Skills"
         second="Projects"
       />
-      <ScrollView>
+      <View
+        style={{
+          gap: 4,
+          paddingVertical: 8,
+        }}
+      >
         {selected === 0
           ? user.cursus_users[state].skills.map((skill) => {
               return <Skill skill={skill} key={skill.id} />;
@@ -95,7 +101,7 @@ function Profile({ user, setUser }) {
               .map((project) => {
                 return <Project project={project} key={project.id} />;
               })}
-      </ScrollView>
+      </View>
       <Selector
         selectable={true}
         state={state}
@@ -103,7 +109,7 @@ function Profile({ user, setUser }) {
         first="C piscine"
         second="42Cursus"
       />
-    </Card>
+    </ScrollView>
   );
 }
 
@@ -118,6 +124,7 @@ const styles = StyleSheet.create({
   logo: {},
   title: {
     fontSize: 24,
+    textAlign: "center",
     alignSelf: "center",
     fontWeight: "bold",
   },
@@ -136,6 +143,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: "red",
+  },
+  card: {
+    backgroundColor: "white",
+    width: "90%",
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    ...Platform.select({
+      ios: {
+        shadowColor: "black",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 3,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
 });
 
