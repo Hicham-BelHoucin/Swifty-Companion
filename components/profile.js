@@ -2,16 +2,12 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
-  TextInput,
   Image,
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-
 import React from "react";
 import Selector from "./../components/selector";
-import Card from "./../components/card";
 import ProgressBar from "./../components/progress-bar";
 import Info from "./../components/Info";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -19,9 +15,6 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Entypo from "react-native-vector-icons/Entypo";
 import Project from "./../components/project";
 import Skill from "./../components/skill";
-import Toast from "react-native-toast-message";
-import { getValueFor, deleteValueFor } from "../tools";
-import Icon from "react-native-vector-icons/SimpleLineIcons";
 
 function Profile({ user, setUser }) {
   const [state, setState] = React.useState(1);

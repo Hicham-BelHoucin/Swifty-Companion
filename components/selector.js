@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
 
 const Selector = ({ selectable, state, setState, first, second }) => {

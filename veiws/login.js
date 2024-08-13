@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { View, Linking, Button, Image } from "react-native";
+import React from "react";
+import { View, Button, Image } from "react-native";
 import { WebView } from "react-native-webview";
 import Card from "./../components/card";
 import { getTokens } from "./../tools";

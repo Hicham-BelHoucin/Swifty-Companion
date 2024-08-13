@@ -1,12 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  TextInput,
-  Image,
-  ScrollView,
-} from "react-native";
+import { Text, View } from "react-native";
 
 const Skill = ({ skill }) => {
   return (

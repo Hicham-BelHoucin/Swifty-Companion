@@ -13,7 +13,7 @@ import Toast from "react-native-toast-message";
 import { getValueFor, deleteValueFor } from "../tools";
 import Icon from "react-native-vector-icons/SimpleLineIcons";
 import Profile from "./../components/profile";
-import { useAuthContext, authUrl } from "../context/auth.context";
+import { useAuthContext } from "../context/auth.context";
 
 function HomePage({ navigation }) {
   const [value, onChangeText] = React.useState("");

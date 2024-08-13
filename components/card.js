@@ -1,12 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  TextInput,
-  Image,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, View } from "react-native";
 
 const Card = ({ children, style }) => {
   return <View style={{ ...styles.card, ...style }}>{children}</View>;
