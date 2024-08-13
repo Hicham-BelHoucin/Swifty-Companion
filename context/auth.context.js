@@ -32,8 +32,9 @@ export function AuthContextProvider({ children }) {
         const token = await getValueFor("access_token");
         if (token) {
           const isExpired = isTokenExpired(token.created_at, token.expires_in);
-          console.log("isExpired", isExpired);
-          await refreshToken();
+          if (!isExpired) {
+            await refreshToken();
+          }
           const user = await getUserInfo("hbel-hou");
           if (user) {
             setAuthorized(true);

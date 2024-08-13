@@ -69,7 +69,6 @@ export async function refreshToken() {
       body: formBody,
     });
     const data = await res.json();
-    console.log("data", data);
     await setValueFor("access_token", data);
   } catch (error) {}
 }
