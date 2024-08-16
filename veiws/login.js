@@ -2,17 +2,18 @@ import React from "react";
 import { View, Button, Image } from "react-native";
 import { WebView } from "react-native-webview";
 import Card from "./../components/card";
-import { getTokens } from "./../tools";
+import { getTokens } from "../api/api";
 import { useAuthContext, authUrl } from "../context/auth.context";
 import { REACT_APP_REDIRECT_URI } from "@env";
 import Toast from "react-native-toast-message";
 
 const OAuthScreen = ({ navigation }) => {
-  const { setAuthorized } = useAuthContext();
+  const { setAuthorized, authorized } = useAuthContext();
   const [login, setLogin] = React.useState(false);
   const ref = React.useRef(false);
 
   const handleRedirect = (url) => {
+    // console.log(url);
     if (url.startsWith(REACT_APP_REDIRECT_URI)) {
       const error = url.match(/\?error=([^&]+)/)
         ? url.match(/\?error=([^&]+)/)[1]
@@ -26,8 +27,10 @@ const OAuthScreen = ({ navigation }) => {
         setLogin(false);
         return;
       }
-      const code = url.match(/\?code=([^&]+)/)[1];
-      handleAuthorizationCode(code);
+      const code = url.match(/\?code=([^&]+)/)
+        ? url.match(/\?code=([^&]+)/)[1]
+        : null;
+      code !== null && handleAuthorizationCode(code);
     }
   };
 
@@ -43,6 +46,11 @@ const OAuthScreen = ({ navigation }) => {
     });
     setAuthorized(true);
   };
+
+  React.useEffect(() => {
+    setLogin(authorized);
+    ref.current = authorized;
+  }, [authorized]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -84,6 +92,7 @@ const OAuthScreen = ({ navigation }) => {
       ) : (
         <WebView
           source={{ uri: authUrl }}
+          // incognito={true}
           onNavigationStateChange={(nav) => {
             handleRedirect(nav?.url || "");
           }}

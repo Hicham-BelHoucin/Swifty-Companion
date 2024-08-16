@@ -10,10 +10,11 @@ import {
 import React from "react";
 import Card from "./../components/card";
 import Toast from "react-native-toast-message";
-import { getValueFor, deleteValueFor } from "../tools";
+import { getValueFor, deleteValueFor } from "../api/storage";
 import Icon from "react-native-vector-icons/SimpleLineIcons";
 import Profile from "./../components/profile";
 import { useAuthContext } from "../context/auth.context";
+import { getUserInfo } from "../api/api";
 
 function HomePage({ navigation }) {
   const [value, onChangeText] = React.useState("");
@@ -38,8 +39,8 @@ function HomePage({ navigation }) {
               color={"#0961F5"}
               onPress={async () => {
                 await deleteValueFor("access_token");
-                setAuthorized(false);
                 navigation.navigate("Login");
+                setAuthorized(false);
               }}
             />
           </TouchableOpacity>
@@ -50,43 +51,11 @@ function HomePage({ navigation }) {
 
   const search = async () => {
     try {
-      if (value === "") {
-        Toast.show({
-          type: "error", // 'info', 'success', 'error', or 'warning'
-          text1: "Please enter a login",
-          text2: "Please try again",
-        });
-        return;
-      }
-      const token = await getValueFor("access_token");
-      if (!token) return;
-      setLoading(true);
-      const response = await fetch(
-        `https://api.intra.42.fr/v2/users/${value.toLowerCase()}`,
-        {
-          headers: {
-            authorization: `Bearer ${token.access_token}`,
-          },
-        }
-      );
-      const data = await response.json();
-      if (response.ok && data && Object.keys(data).length !== 0) {
-        setData(data);
-      } else {
-        Toast.show({
-          type: "error", // 'info', 'success', 'error', or 'warning'
-          text1: data.error || "No user found",
-          text2: "Please try again",
-        });
-      }
+      const data = await getUserInfo(value);
+      setData(data);
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      Toast.show({
-        type: "error", // 'info', 'success', 'error', or 'warning'
-        text1: "No user found",
-        text2: "Please try again",
-      });
     }
   };
 
