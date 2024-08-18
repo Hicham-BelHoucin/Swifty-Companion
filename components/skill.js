@@ -20,7 +20,7 @@ const Skill = ({ skill }) => {
           color: "#696969",
         }}
       >
-        {skill.level.toFixed(2)}
+        {skill.level.toFixed(2)} %
       </Text>
     </View>
   );

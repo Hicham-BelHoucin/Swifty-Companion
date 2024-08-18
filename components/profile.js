@@ -81,7 +81,11 @@ function Profile({ user }) {
           style={styles.background}
         />
         <Image
-          source={{ uri: user.image.link || "" }}
+          source={{
+            uri:
+              user.image.link ||
+              "https://auth.42.fr/auth/resources/yyzrk/login/students/img/bkgrnd.jpg",
+          }}
           style={{
             alignSelf: "center",
             width: 120,

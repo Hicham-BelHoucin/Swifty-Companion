@@ -74,7 +74,6 @@ const OAuthScreen = ({ navigation }) => {
         flex: 1,
       }}
     >
-      <Toast />
       {!login ? (
         <View
           style={{
@@ -95,6 +94,7 @@ const OAuthScreen = ({ navigation }) => {
               alignItems: "center",
             }}
           >
+            <Toast />
             <Card
               style={{
                 alignSelf: "center",
