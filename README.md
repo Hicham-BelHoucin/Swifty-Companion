@@ -5,10 +5,12 @@ Swifty Companion is a React Native application designed to search for and displa
 ## Features
 
 - Two Views:
+
   1. **Search View**: Allows users to input text to search for login information.
   2. **User Profile View**: Displays detailed user information, including profile picture, login, email, mobile, level, location, wallet, evaluations, skills with levels and percentages, and completed projects.
 
 - Navigation:
+
   - Users can easily navigate between the two views.
   - A user-friendly interface makes it easy to go back to the first view.
 

@@ -1,5 +1,14 @@
 import React from "react";
-import { View, Button, Image } from "react-native";
+import {
+  View,
+  Button,
+  Image,
+  ImageBackground,
+  Pressable,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 import { WebView } from "react-native-webview";
 import Card from "./../components/card";
 import { getTokens } from "../api/api";
@@ -8,12 +17,11 @@ import { REACT_APP_REDIRECT_URI } from "@env";
 import Toast from "react-native-toast-message";
 
 const OAuthScreen = ({ navigation }) => {
-  const { setAuthorized, authorized } = useAuthContext();
+  const { setAuthorized, authorized, loading } = useAuthContext();
   const [login, setLogin] = React.useState(false);
   const ref = React.useRef(false);
 
   const handleRedirect = (url) => {
-    // console.log(url);
     if (url.startsWith(REACT_APP_REDIRECT_URI)) {
       const error = url.match(/\?error=([^&]+)/)
         ? url.match(/\?error=([^&]+)/)[1]
@@ -38,7 +46,7 @@ const OAuthScreen = ({ navigation }) => {
     if ((!code && ref.current) || ref.current) return;
     ref.current = true;
     await getTokens(code);
-    navigation.navigate("Details");
+    navigation.navigate("Search");
     Toast.show({
       type: "success",
       text1: "Success",
@@ -52,8 +60,20 @@ const OAuthScreen = ({ navigation }) => {
     ref.current = authorized;
   }, [authorized]);
 
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
   return (
-    <View style={{ flex: 1 }}>
+    <View
+      style={{
+        flex: 1,
+      }}
+    >
       <Toast />
 
       {!login ? (
@@ -64,30 +84,64 @@ const OAuthScreen = ({ navigation }) => {
             justifyContent: "center",
           }}
         >
-          <Card
+          <ImageBackground
+            source={{
+              uri: "https://auth.42.fr/auth/resources/yyzrk/login/students/img/bkgrnd.jpg",
+            }}
             style={{
-              alignSelf: "center",
-              width: "80%",
-              height: "60%",
+              flex: 1,
+              width: "100%",
+              height: "100%",
               justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            <Image
-              source={require("./../assets/logo.png")}
-              alt="test"
+            <Card
               style={{
                 alignSelf: "center",
-                width: 100,
-                height: 100,
+                width: "80%",
+                height: "60%",
+                justifyContent: "center",
+                backgroundColor: "transparent",
+                // remove shadow
+                shadowColor: "transparent",
+                elevation: 0,
               }}
-            />
-            <Button
-              title="Login"
-              onPress={() => {
-                setLogin(true);
-              }}
-            />
-          </Card>
+            >
+              <Image
+                source={require("./../assets/logo.png")}
+                alt="test"
+                style={{
+                  alignSelf: "center",
+                  width: 100,
+                  height: 100,
+                }}
+              />
+              <Pressable
+                onPress={() => {
+                  setLogin(true);
+                }}
+                style={{
+                  backgroundColor: "#00babc",
+                  color: "white",
+                  borderRadius: 10,
+                  overflow: "hidden",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    padding: 10,
+                    fontWeight: "bold",
+                  }}
+                >
+                  Login with 42
+                </Text>
+              </Pressable>
+            </Card>
+          </ImageBackground>
         </View>
       ) : (
         <WebView
@@ -101,5 +155,15 @@ const OAuthScreen = ({ navigation }) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F5F9FF",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 16,
+  },
+});
 
 export default OAuthScreen;

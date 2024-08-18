@@ -1,11 +1,11 @@
 import { Text, View } from "react-native";
 
-const ProgressBar = ({ level }) => {
+const ProgressBar = ({ level, coalition }) => {
   return (
     <View>
       <View
         style={{
-          backgroundColor: "#F5F9FF",
+          backgroundColor: "#e6e6e6",
           height: 20,
           borderRadius: 4,
           overflow: "hidden",
@@ -13,7 +13,7 @@ const ProgressBar = ({ level }) => {
       >
         <View
           style={{
-            backgroundColor: "#0961F5",
+            backgroundColor: coalition.color,
             height: "100%",
             width: `${(level % 1) * 100}%`,
           }}

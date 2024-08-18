@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 
-const Info = ({ title, value }) => {
+const Info = ({ title, value, coalition }) => {
   return (
     <View
       style={{
@@ -13,8 +13,8 @@ const Info = ({ title, value }) => {
     >
       <Text
         style={{
-          color: "#0961F5",
-          fontWeight: "bold",
+          color: "#fff",
+          fontWeight: "semibold",
           fontSize: 16,
         }}
       >
@@ -22,7 +22,7 @@ const Info = ({ title, value }) => {
       </Text>
       <Text
         style={{
-          color: "#696969",
+          color: "#fff",
           fontSize: 16,
         }}
       >

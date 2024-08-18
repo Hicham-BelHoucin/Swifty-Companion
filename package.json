@@ -31,7 +31,8 @@
     "react-native-select-dropdown": "^3.4.0",
     "react-native-toast-message": "^2.1.6",
     "react-native-vector-icons": "^10.0.0",
-    "react-native-webview": "13.2.2"
+    "react-native-webview": "13.2.2",
+    "expo-linear-gradient": "~12.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

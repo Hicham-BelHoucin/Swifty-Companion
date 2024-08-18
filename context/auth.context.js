@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import { getValueFor, setValueFor } from "../api/storage";
+import { getValueFor, setValueFor, isTokenExpired } from "../api/storage";
 import { refreshToken, getUserInfo, get_token_info } from "../api/api";
 import { useNavigation } from "@react-navigation/native";
 import { REACT_APP_CLIENT_ID, REACT_APP_REDIRECT_URI } from "@env";
@@ -16,15 +16,10 @@ export function useAuthContext() {
   return useContext(AuthContext);
 }
 
-function isTokenExpired(createdAt, expiresIn) {
-  const currentTime = parseInt(Date.now() / 1000);
-  const expirationTime = parseInt(createdAt) + parseInt(expiresIn);
-  return currentTime > expirationTime;
-}
-
 // Create a provider component
 export function AuthContextProvider({ children }) {
   const [authorized, setAuthorized] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
 
   React.useEffect(() => {
@@ -39,7 +34,7 @@ export function AuthContextProvider({ children }) {
           const user = await getUserInfo("hbel-hou");
           if (user) {
             setAuthorized(true);
-            navigation.navigate("Details");
+            navigation.navigate("Search");
           }
         } else {
           setAuthorized(false);
@@ -48,13 +43,19 @@ export function AuthContextProvider({ children }) {
       } catch (error) {
         navigation.navigate("Login");
         setAuthorized(false);
+      } finally {
+        setLoading(false);
       }
     };
     check();
   }, []);
 
+  // write test use effect to change value of token to test expiration case
+
   return (
-    <AuthContext.Provider value={{ authorized, setAuthorized }}>
+    <AuthContext.Provider
+      value={{ authorized, setAuthorized, loading, setLoading }}
+    >
       {children}
     </AuthContext.Provider>
   );

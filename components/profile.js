@@ -5,6 +5,8 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  ImageBackground,
+  ActivityIndicator,
 } from "react-native";
 import React from "react";
 import Selector from "./../components/selector";
@@ -15,10 +17,47 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Entypo from "react-native-vector-icons/Entypo";
 import Project from "./../components/project";
 import Skill from "./../components/skill";
+import { get_user_coalition } from "../api/api";
+import { LinearGradient } from "expo-linear-gradient";
 
-function Profile({ user, setUser }) {
-  const [state, setState] = React.useState(1);
+function Profile({ user }) {
+  const [state, setState] = React.useState(0);
   const [selected, setSelected] = React.useState(0);
+  const [coalition, setCoalition] = React.useState({
+    cover_url:
+      "https://auth.42.fr/auth/resources/yyzrk/login/students/img/bkgrnd.jpg",
+  });
+  const [labels, setLabels] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+
+  // write user to a file
+  React.useEffect(() => {
+    (async () => {
+      const labels = user.cursus_users.map((cursus) => {
+        return {
+          id: cursus.cursus.id,
+          name: cursus.cursus.name,
+        };
+      });
+      setLabels(labels);
+      const data = await get_user_coalition(user.login);
+      if (!data || data.length === 0) {
+        setLoading(false);
+        return;
+      }
+      setCoalition(data[0]);
+      setLoading(false);
+    })();
+  }, [user]);
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
   return (
     <ScrollView
       style={{
@@ -26,56 +65,83 @@ function Profile({ user, setUser }) {
         ...styles.card,
       }}
     >
-      <TouchableOpacity
-        style={{
-          alignSelf: "flex-end",
+      <ImageBackground
+        source={{
+          uri: coalition.cover_url || "https://i.imgur.com/2zYf8ZB.jpg",
         }}
-        onPress={() => {
-          setUser(null);
+        style={{
+          ...styles.image,
+          color: "white",
+          gap: 4,
         }}
       >
-        <Ionicons name="close" size={25} />
-      </TouchableOpacity>
-      <Image
-        source={{ uri: user.image.link || "" }}
-        style={{
-          alignSelf: "center",
-          width: 120,
-          height: 120,
-          borderRadius: 9999,
-        }}
-      />
-      <Text style={styles.title}>{user.displayname}</Text>
-      <Text style={styles.login}>{user.login}</Text>
-      <Info title="Wallet" value={user.wallet + " ₳"} />
-      <Info title="Evaluation points" value={user.correction_point} />
-      {!!user.cursus_users[state].grade && (
-        <Info title="Grade" value={user.cursus_users[state].grade} />
-      )}
-      <Info
-        title={
-          <MaterialCommunityIcons name="email" size={20} color={"#0961F5"} />
-        }
-        value={user.email}
-      />
-      <Info
-        title={<Ionicons name="location" size={20} color={"#0961F5"} />}
-        value={user.location || "Unavailable"}
-      />
-      {user?.phone !== "hidden" && (
-        <Info
-          title={<Entypo name="phone" size={20} color={"#0961F5"} />}
-          value={user.phone}
+        <LinearGradient
+          // Background Linear Gradient
+          colors={["transparent", "#00000070"]}
+          style={styles.background}
         />
-      )}
-      <ProgressBar level={user.cursus_users[state].level} />
+        <Image
+          source={{ uri: user.image.link || "" }}
+          style={{
+            alignSelf: "center",
+            width: 120,
+            height: 120,
+            borderRadius: 9999,
+          }}
+        />
+        <Text
+          style={{
+            ...styles.title,
+            color: "#e6e6e6",
+          }}
+        >
+          {user.displayname}
+        </Text>
+        <Text
+          style={{
+            ...styles.login,
+            color: "#cccccc",
+          }}
+        >
+          {user.login}
+        </Text>
+        <Info coalition={coalition} title="Wallet" value={user.wallet + " ₳"} />
+        <Info
+          coalition={coalition}
+          title="Evaluation points"
+          value={user.correction_point}
+        />
+
+        <Info
+          coalition={coalition}
+          title="Grade"
+          value={user.cursus_users[state]?.grade || "Unavailable"}
+        />
+
+        <Info
+          coalition={coalition}
+          title={
+            <MaterialCommunityIcons name="email" size={20} color={"#fff"} />
+          }
+          value={user.email}
+        />
+        <Info
+          coalition={coalition}
+          title={<Ionicons name="location" size={20} color={"#fff"} />}
+          value={user.location || "Unavailable"}
+        />
+        <ProgressBar
+          coalition={coalition}
+          level={user.cursus_users[state]?.level}
+        />
+      </ImageBackground>
       <View style={styles.divider}></View>
+
       <Selector
         selectable={true}
-        state={selected}
-        setState={setSelected}
-        first="Skills"
-        second="Projects"
+        state={state}
+        setState={setState}
+        labels={labels}
       />
       <View
         style={{
@@ -83,25 +149,27 @@ function Profile({ user, setUser }) {
           paddingVertical: 8,
         }}
       >
+        <Selector
+          selectable={true}
+          state={selected}
+          setState={setSelected}
+          labels={[
+            { id: 0, name: "Skills" },
+            { id: 1, name: "Projects" },
+          ]}
+        />
         {selected === 0
-          ? user.cursus_users[state].skills.map((skill) => {
+          ? user.cursus_users[state]?.skills.map((skill) => {
               return <Skill skill={skill} key={skill.id} />;
             })
           : user.projects_users
               .filter((project) => {
-                return project.cursus_ids.includes(state === 1 ? 21 : 9);
+                return project.cursus_ids.includes(labels[state].id);
               })
               .map((project) => {
                 return <Project project={project} key={project.id} />;
               })}
       </View>
-      <Selector
-        selectable={true}
-        state={state}
-        setState={setState}
-        first="C piscine"
-        second="42Cursus"
-      />
     </ScrollView>
   );
 }
@@ -113,6 +181,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 16,
+  },
+  image: {
+    resizeMode: "cover",
+    padding: 10,
+    borderRadius: 10,
+    overflow: "hidden",
+  },
+  background: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    height: "110%",
   },
   logo: {},
   title: {
@@ -139,20 +220,8 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: "white",
-    width: "90%",
-    borderRadius: 10,
+    width: "100%",
     paddingHorizontal: 10,
-    ...Platform.select({
-      ios: {
-        shadowColor: "black",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
   },
 });
 
