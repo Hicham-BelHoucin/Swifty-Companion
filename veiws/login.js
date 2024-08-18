@@ -75,7 +75,6 @@ const OAuthScreen = ({ navigation }) => {
       }}
     >
       <Toast />
-
       {!login ? (
         <View
           style={{
@@ -146,7 +145,7 @@ const OAuthScreen = ({ navigation }) => {
       ) : (
         <WebView
           source={{ uri: authUrl }}
-          // incognito={true}
+          incognito={true}
           onNavigationStateChange={(nav) => {
             handleRedirect(nav?.url || "");
           }}
